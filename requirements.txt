@@ -1,0 +1,5 @@
+streamlit
+streamlit-authenticator
+aioboto3
+pydantic
+autopep8
