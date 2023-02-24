@@ -139,9 +139,9 @@ async def main():
             uploaded_files = st.file_uploader(
                 "Choose file(s)", accept_multiple_files=True)
             required_presigned_url = st.checkbox('Generate presigned url')
-            submitted = st.form_submit_button('submitted')
+            uploaded = st.form_submit_button('upload')
 
-            if uploaded_files and submitted:
+            if uploaded_files and uploaded:
                 start = perf_counter()
                 n_files = len(uploaded_files)
                 div, _ = divmod(n_files, n_rate_limit)
@@ -167,7 +167,7 @@ async def main():
                     elapsed = perf_counter() - start
                     st.success(f'Done, {elapsed:=.2f} secs!')
 
-    if uploaded_files and submitted and csv:
+    if uploaded_files and uploaded and csv:
         st.download_button(
             label="Download data as CSV",
             data=csv,
