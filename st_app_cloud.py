@@ -125,7 +125,7 @@ async def main():
     st.session_state['gen_urls'] = []
 
     n_rate_limit = 50
-    uploaded_files, submitted, csv = None, None, None
+    uploaded_files, uploaded, csv = None, None, None
 
     authenticator = get_authenticator()
     name, authentication_status, username = authenticator.login(
@@ -167,17 +167,17 @@ async def main():
                     elapsed = perf_counter() - start
                     st.success(f'Done, {elapsed:=.2f} secs!')
 
+    elif authentication_status is False:
+        st.error('Username/password is incorrect')
+    elif authentication_status is None:
+        st.warning('Please enter your username and password')
+
     if uploaded_files and uploaded and csv:
         st.download_button(
             label="Download data as CSV",
             data=csv,
             file_name='urls.csv',
             mime='text/csv')
-
-    elif authentication_status is False:
-        st.error('Username/password is incorrect')
-    elif authentication_status is None:
-        st.warning('Please enter your username and password')
 
 
 if __name__ == '__main__':
