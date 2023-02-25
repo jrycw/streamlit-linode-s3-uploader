@@ -121,20 +121,18 @@ def convert_df(df: pd.DataFrame, index: bool = False, header: bool = False):
 
 
 async def main():
-
     # always clear gen_urls first
     st.session_state['gen_urls'] = []
 
-    n_rate_limit = 50
+    n_rate_limit = st.secrets['n_rate_limit']
     uploaded_files, uploaded, csv = None, None, None
 
     authenticator = get_authenticator()
-
     name, authentication_status, username = authenticator.login(
         'Login', 'main')
 
     if authentication_status:
-        col1, col2, col3 = st.columns([1, 1, 6])
+        col1, col2, _ = st.columns([1, 1, 6])
         with col1:
             if st.button('Refresh'):
                 st.experimental_rerun()
