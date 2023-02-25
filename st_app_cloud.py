@@ -148,43 +148,43 @@ async def main():
             required_presigned_url = st.checkbox('Generate presigned url')
             uploaded = st.form_submit_button('Upload')
 
-            if uploaded_files and uploaded:
-                start = perf_counter()
-                n_files = len(uploaded_files)
-                div, _ = divmod(n_files, n_rate_limit)
-                n = div+1
-                bar = st.progress(0, text='Preparing...')
-                bucket_name = get_bucket_name()
-                async with get_s3() as s3:
-                    for i in range(n):
-                        chunk_files = uploaded_files[(
-                            i)*n_rate_limit: (i+1)*n_rate_limit]
-                        await async_upload_files(s3, bucket_name, chunk_files, required_presigned_url)
-                        current_progress = (i+1)/n
-                        bar.progress(current_progress,
-                                     text=f'Uploading...{current_progress*100:.2f}% done')
-                    if required_presigned_url:
-                        urls = st.session_state['gen_urls']
-                        df = pd.DataFrame(urls,
-                                          index=range(1, len(urls)+1),
-                                          columns=['gen_url'])
-                        st.dataframe(df)
-                        csv = convert_df(df)
+        if uploaded_files and uploaded:
+            start = perf_counter()
+            n_files = len(uploaded_files)
+            div, _ = divmod(n_files, n_rate_limit)
+            n = div+1
+            bar = st.progress(0, text='Preparing...')
+            bucket_name = get_bucket_name()
+            async with get_s3() as s3:
+                for i in range(n):
+                    chunk_files = uploaded_files[(
+                        i)*n_rate_limit: (i+1)*n_rate_limit]
+                    await async_upload_files(s3, bucket_name, chunk_files, required_presigned_url)
+                    current_progress = (i+1)/n
+                    bar.progress(current_progress,
+                                 text=f'Uploading...{current_progress*100:.2f}% done')
+                if required_presigned_url:
+                    urls = st.session_state['gen_urls']
+                    df = pd.DataFrame(urls,
+                                      index=range(1, len(urls)+1),
+                                      columns=['gen_url'])
+                    st.dataframe(df)
+                    csv = convert_df(df)
 
-                    elapsed = perf_counter() - start
-                    st.success(f'Done, {elapsed:=.2f} secs!')
+                elapsed = perf_counter() - start
+                st.success(f'Done, {elapsed:=.2f} secs!')
+
+        if uploaded_files and uploaded and csv:
+            st.download_button(
+                label="Download data as CSV",
+                data=csv,
+                file_name='urls.csv',
+                mime='text/csv')
 
     elif authentication_status is False:
         st.error('Username/password is incorrect')
     elif authentication_status is None:
         st.warning('Please enter your username and password')
-
-    if uploaded_files and uploaded and csv:
-        st.download_button(
-            label="Download data as CSV",
-            data=csv,
-            file_name='urls.csv',
-            mime='text/csv')
 
 
 if __name__ == '__main__':
