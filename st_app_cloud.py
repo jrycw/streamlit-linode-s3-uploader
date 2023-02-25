@@ -121,6 +121,7 @@ def convert_df(df: pd.DataFrame, index: bool = False, header: bool = False):
 
 
 async def main():
+
     # always clear gen_urls first
     st.session_state['gen_urls'] = []
 
@@ -128,18 +129,24 @@ async def main():
     uploaded_files, uploaded, csv = None, None, None
 
     authenticator = get_authenticator()
+
     name, authentication_status, username = authenticator.login(
         'Login', 'main')
 
     if authentication_status:
-        authenticator.logout('Logout', 'main')
+        col1, col2, col3 = st.columns([1, 1, 6])
+        with col1:
+            if st.button('Refresh'):
+                st.experimental_rerun()
+        with col2:
+            authenticator.logout('Logout', 'main')
         st.title(f'Hello, {username}')
 
         with st.form('upload-form'):
             uploaded_files = st.file_uploader(
                 "Choose file(s)", accept_multiple_files=True)
             required_presigned_url = st.checkbox('Generate presigned url')
-            uploaded = st.form_submit_button('upload')
+            uploaded = st.form_submit_button('Upload')
 
             if uploaded_files and uploaded:
                 start = perf_counter()
