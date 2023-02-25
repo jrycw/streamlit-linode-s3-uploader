@@ -142,7 +142,7 @@ async def main():
             authenticator.logout('Logout', 'main')
         st.title(f'Hello, {username}')
 
-        with st.form('upload-form'):
+        with st.form('upload-form', clear_on_submit=True):
             uploaded_files = st.file_uploader(
                 "Choose file(s)", accept_multiple_files=True)
             required_presigned_url = st.checkbox('Generate presigned url')
